@@ -1,7 +1,9 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project version="4">
   <component name="ChangeListManager">
-    <list default="true" id="ae278cd7-1415-436c-9549-689f943adf05" name="Default" comment="" />
+    <list default="true" id="ae278cd7-1415-436c-9549-689f943adf05" name="Default" comment="">
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/.idea/workspace.xml" afterPath="$PROJECT_DIR$/.idea/workspace.xml" />
+    </list>
     <ignored path="$PROJECT_DIR$/out/" />
     <ignored path="$PROJECT_DIR$/.gradle/" />
     <ignored path="$PROJECT_DIR$/build/" />
@@ -88,8 +90,8 @@
               <caret line="56" column="26" lean-forward="false" selection-start-line="56" selection-start-column="26" selection-end-line="56" selection-end-column="26" />
               <folding>
                 <element signature="imports" expanded="true" />
-                <marker date="1510181836163" expanded="true" signature="1138:1301" ph="select url, domain" />
-                <marker date="1510181836163" expanded="true" signature="1138:1318" ph="select url, domain" />
+                <marker date="1510273103542" expanded="true" signature="1138:1301" ph="select url, domain" />
+                <marker date="1510273103542" expanded="true" signature="1138:1318" ph="select url, domain" />
               </folding>
             </state>
           </provider>
@@ -310,9 +312,10 @@
     </option>
     <option name="modificationStamps">
       <map>
-        <entry key="$PROJECT_DIR$" value="4530511005257" />
+        <entry key="$PROJECT_DIR$" value="4530819309937" />
         <entry key="$PROJECT_DIR$/build.gradle" value="798735994" />
         <entry key="$PROJECT_DIR$/gradle/wrapper/gradle-wrapper.properties" value="615277776" />
+        <entry key="$PROJECT_DIR$/settings.gradle" value="2585127751" />
       </map>
     </option>
     <option name="projectBuildClasspath">
@@ -738,12 +741,12 @@
       <option name="presentableId" value="Default" />
       <updated>1510165876909</updated>
       <workItem from="1510165880488" duration="11393000" />
-      <workItem from="1510271993904" duration="475000" />
+      <workItem from="1510271993904" duration="1064000" />
     </task>
     <servers />
   </component>
   <component name="TimeTrackingManager">
-    <option name="totallyTimeSpent" value="11868000" />
+    <option name="totallyTimeSpent" value="12457000" />
   </component>
   <component name="ToolWindowManager">
     <frame x="-8" y="-8" width="1382" height="744" extended-state="6" />
@@ -816,8 +819,8 @@
           <caret line="56" column="26" lean-forward="false" selection-start-line="56" selection-start-column="26" selection-end-line="56" selection-end-column="26" />
           <folding>
             <element signature="imports" expanded="true" />
-            <marker date="1510181836163" expanded="true" signature="1138:1301" ph="select url, domain" />
-            <marker date="1510181836163" expanded="true" signature="1138:1318" ph="select url, domain" />
+            <marker date="1510273103542" expanded="true" signature="1138:1301" ph="select url, domain" />
+            <marker date="1510273103542" expanded="true" signature="1138:1318" ph="select url, domain" />
           </folding>
         </state>
       </provider>
@@ -1012,8 +1015,8 @@
           <caret line="56" column="26" lean-forward="false" selection-start-line="56" selection-start-column="26" selection-end-line="56" selection-end-column="26" />
           <folding>
             <element signature="imports" expanded="true" />
-            <marker date="1510181836163" expanded="true" signature="1138:1301" ph="select url, domain" />
-            <marker date="1510181836163" expanded="true" signature="1138:1318" ph="select url, domain" />
+            <marker date="1510273103542" expanded="true" signature="1138:1301" ph="select url, domain" />
+            <marker date="1510273103542" expanded="true" signature="1138:1318" ph="select url, domain" />
           </folding>
         </state>
       </provider>
