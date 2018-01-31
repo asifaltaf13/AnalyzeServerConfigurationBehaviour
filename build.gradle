@@ -13,5 +13,4 @@ dependencies {
     compile group: 'org.postgresql', name: 'postgresql', version: '9.4-1200-jdbc41'
     compile 'postgresql:postgresql:9.1-901-1.jdbc4'
     compile group: 'com.google.code.gson', name: 'gson', version: '2.7'
-
 }
