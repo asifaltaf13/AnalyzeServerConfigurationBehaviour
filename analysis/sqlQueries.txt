@@ -160,3 +160,9 @@ GROUP BY ConfigCounts.NumberOfConfigurations
 ORDER by ConfigCounts.NumberOfConfigurations ASC;
 
 
+/////////////////
+// Getting counts of all possible gradings 
+// for "Number of Configuration Attempt" Groups
+///////////////
+
+
