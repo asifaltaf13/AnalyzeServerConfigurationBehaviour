@@ -1,0 +1,7 @@
+D:\bonn\courses\labs\labUsableSecurityAndPrivacy\datasets\fluffy_rainbows\17-10-26-qualysdump.sql
+
+D:/bonn/courses/labs/labUsableSecurityAndPrivacy/datasets/fluffy_rainbows/17-10-26-qualysdump.sql
+
+psql fluffy_rainbows < 17-10-26-qualysdump.sql
+
+psql -U postgres --set ON_ERROR_STOP=on fluffy_rainbows < 17-10-26-qualysdump.sql

@@ -1,0 +1,162 @@
+////////////////
+// COUNT queries
+////////////////
+
+SELECT count(*)
+FROM domain;
+
+SELECT count(*)
+FROM history;
+
+
+///////////////
+// DISTINCT queries
+////////////////
+
+SELECT count(distinct(id))
+FROM domain;
+
+SELECT distinct(id)
+FROM domain;
+
+SELECT distinct(id), url
+FROM domain;
+
+
+/////////////////
+// Top 100 Results
+////////////////
+
+SELECT * 
+FROM history
+ORDER BY id ASC 
+LIMIT 100;
+
+
+/////////////////
+// NULL Ratings
+////////////////
+
+SELECT count(*) 
+FROM history
+WHERE rating IS NULL;
+
+
+/////////////////
+// EMPTY Ratings
+////////////////
+
+SELECT count(*) AS "Number of Empty Ratings"
+FROM history
+WHERE rating = '';
+
+// Result "45089" out of over 200,000
+
+
+/////////////////
+// Domain Rating History 100 ROWS
+////////////////
+
+SELECT 
+
+d.id AS "ID", 
+d.url AS "URL", 
+h.datein AS "Timestamp",
+h.rating AS "Rating" 
+
+FROM domain d, history h
+WHERE d.id = h.domainhistory
+ORDER BY d.id ASC 
+LIMIT 100;
+
+
+/////////////////
+// Domain Rating History
+////////////////
+
+
+SELECT 
+
+d.id AS "ID", 
+d.url AS "URL", 
+h.datein AS "Timestamp",
+h.rating AS "Rating" 
+
+FROM domain d, history h
+WHERE d.id = h.domainhistory
+ORDER BY d.id ASC;
+
+/////////////////
+// Domain Rating History with Rating Cleaned
+////////////////
+
+SELECT 
+
+d.id AS "ID", 
+d.url AS "URL", 
+h.datein AS "Timestamp",
+TRIM(regexp_replace(regexp_replace(regexp_replace(h.rating, '\n', ''),'\t', ''),'\r', '')) AS "Rating" 
+
+FROM domain d, history h
+WHERE d.id = h.domainhistory
+ORDER BY d.id ASC, h.datein ASC;
+
+
+/////////////////
+// Domain Rating History with Rating Cleaned
+////////////////
+
+SELECT 
+
+d.id AS "ID", 
+d.url AS "URL", 
+h.datein AS "Timestamp",
+
+TRIM(
+	regexp_replace(
+		regexp_replace(
+			regexp_replace(h.rating, '\n', ''),
+				'\t', ''),
+					'\r', '')
+	) AS "Rating" 
+
+FROM domain d, history h
+WHERE d.id = h.domainhistory
+ORDER BY d.id ASC, h.datein ASC;
+
+
+/////////////////
+// Number of Configurations per Domain
+////////////////
+
+SELECT 
+
+d.id AS "ID", 
+count(h.rating) AS "Number of Configurations" 
+
+FROM domain d, history h
+WHERE d.id = h.domainhistory
+GROUP BY d.id
+ORDER BY d.id ASC;
+
+
+/////////////////
+// Number of Configurations per Domain GROUP by 
+// Number or Configuration Attempts
+////////////////
+
+SELECT
+    DISTINCT ConfigCounts.NumberOfConfigurations AS "Number of Configurations" ,
+	COUNT (ConfigCounts.NumberOfConfigurations) AS "Number of Configuration Attempts" 
+FROM
+(
+    SELECT count(h.domainhistory) AS NumberOfConfigurations
+	FROM domain d, history h
+	WHERE d.id = h.domainhistory
+	GROUP BY h.domainhistory
+) 
+	AS ConfigCounts
+GROUP BY ConfigCounts.NumberOfConfigurations
+ORDER by ConfigCounts.NumberOfConfigurations ASC;
+
+
