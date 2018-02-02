@@ -165,4 +165,53 @@ ORDER by ConfigCounts.NumberOfConfigurations ASC;
 // for "Number of Configuration Attempt" Groups
 ///////////////
 
+SELECT 
+
+h.domainhistory AS ID,
+TRIM(
+	regexp_replace(
+		regexp_replace(
+			regexp_replace(h.rating, '\n', ''),
+				'\t', ''),
+					'\r', '')
+	) AS Rating
+	
+FROM domain d, history h
+WHERE d.id = h.domainhistory
+ORDER BY h.domainhistory, Rating;
+
+
+/////////////////
+// Query to see BEST and POOREST ratings 
+///////////////
+
+SELECT
+    DISTINCT AllRatings.ID AS ID,
+	COUNT (AllRatings.Rating) AS Attempts,
+	MIN (AllRatings.Rating) AS "Best Rating",
+	MAX (AllRatings.Rating) AS "Poorest Rating"
+FROM
+(
+    SELECT h.domainhistory AS ID,
+	TRIM(
+	regexp_replace(
+		regexp_replace(
+			regexp_replace(h.rating, '\n', ''),
+				'\t', ''),
+					'\r', '')
+	) AS Rating
+	
+	FROM domain d, history h
+	WHERE d.id = h.domainhistory
+	ORDER BY h.domainhistory, Rating
+) 
+	AS AllRatings
+GROUP BY AllRatings.ID
+ORDER by AllRatings.ID ASC;
+
+/////////////////
+// Getting counts of all possible gradings 
+// for "Number of Configuration Attempt" Groups
+///////////////
+
 
