@@ -229,6 +229,8 @@ regexp_replace(
 FROM history h
 ORDER BY rating ASC;
 
+//##
+
 SELECT COUNT(rating)
 FROM history
 WHERE rating = ''; 
@@ -239,7 +241,7 @@ UPDATE history
 SET rating = NULL
 WHERE rating = '';
 
-//## Removing some spaces etc
+//## Removing some spaces etc RAN IT TWICE :(
 
 UPDATE history
 
@@ -276,9 +278,35 @@ TYPE JSONB
 USING qualys::JSONB;
 
 /////////////////
-// Getting counts of all possible gradings 
-// for "Number of Configuration Attempt" Groups
+// Getting Best and Worst Ratings 
+// for Analysis in R
 ///////////////
+
+SELECT
+    DISTINCT AllRatings.ID AS ID,
+	COUNT (*) AS Attempts,
+	MIN (AllRatings.Rating) AS "BestRating",
+	MAX (AllRatings.Rating) AS "PoorestRating"
+FROM
+(
+    SELECT h.domainhistory AS ID,
+	d.url AS url,
+	TRIM(
+	regexp_replace(
+		regexp_replace(
+			regexp_replace(h.rating, '\n', ''),
+				'\t', ''),
+					'\r', '')
+	) AS Rating
+	
+	FROM domain d, history h
+	WHERE d.id = h.domainhistory
+	ORDER BY h.domainhistory, Rating
+) 
+	AS AllRatings
+GROUP BY AllRatings.ID
+ORDER by Attempts ASC;
+
 
 
 

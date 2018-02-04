@@ -1,0 +1,61 @@
+/////////////////
+// Getting R Ready for Analysis 
+///////////////
+
+# install ARM package for R
+install.packages("arules")	
+
+
+# use library	
+library("arules")
+
+# get current working directory
+getwd()
+               
+
+# set working directory
+setwd("C:/Users/malik/Documents/GitHub/AnalyzeServerConfigurationBehaviour/analysis/queryResults")     
+
+
+# read csv file
+ratings = read.csv("bestAndWorstRatingsDatasetForR.csv")  
+
+
+# print dataset
+ratings							
+
+
+# see summary
+str(ratings)					
+
+
+# discretize Attempts column by converting to Factor from Integer Type
+ratings$attempts  <- factor(ratings$attempts)
+
+# apply apriori algorithm
+rules <- apriori(ratings[c(2:4)], parameter = list(supp = 0.0001, conf = 0.9, target = "rules"))
+
+
+# number of rules
+rules
+
+
+# summary of rules
+summary(rules)
+
+# inspect head of rules
+inspect(head(rules, by = "lift"))
+
+# inspect in detail
+inspect(rules, by = "lift")
+
+
+
+
+
+
+
+
+
+
+
