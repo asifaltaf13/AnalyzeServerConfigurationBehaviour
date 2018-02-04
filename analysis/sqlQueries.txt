@@ -309,6 +309,28 @@ ORDER by Attempts ASC;
 
 
 
+/////////////////
+// Getting Ratings and their Numbers 
+///////////////
+
+SELECT
+    AllRatings.Rating AS Rating,
+	sum(case when ((AllRatings.Rating is null) OR (AllRatings.Rating is NOT NULL)) then 1 else 0 end) AS Attempts
+	
+FROM
+(
+    SELECT 	
+		h.Rating
+	
+	FROM domain d, history h
+	WHERE d.id = h.domainhistory
+	ORDER BY Rating DESC
+) 
+	AS AllRatings
+GROUP BY AllRatings.Rating
+ORDER by AllRatings.Rating ASC;
+
+
 
 
 
