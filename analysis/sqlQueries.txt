@@ -187,12 +187,14 @@ ORDER BY h.domainhistory, Rating;
 
 SELECT
     DISTINCT AllRatings.ID AS ID,
-	COUNT (AllRatings.Rating) AS Attempts,
+	AllRatings.url AS URL,
+	COUNT (*) AS Attempts,
 	MIN (AllRatings.Rating) AS "Best Rating",
 	MAX (AllRatings.Rating) AS "Poorest Rating"
 FROM
 (
     SELECT h.domainhistory AS ID,
+	d.url AS url,
 	TRIM(
 	regexp_replace(
 		regexp_replace(
@@ -206,12 +208,55 @@ FROM
 	ORDER BY h.domainhistory, Rating
 ) 
 	AS AllRatings
-GROUP BY AllRatings.ID
+GROUP BY AllRatings.ID, AllRatings.url
 ORDER by AllRatings.ID ASC;
+
+
+/////////////////
+// Normalize Rating
+// Update Rating Field in History Table
+///////////////
+
+SELECT COUNT(rating)
+FROM history
+WHERE rating = ''; 
+
+//## "45089" ratings are empty ratings 
+
+UPDATE history
+SET rating = NULL
+WHERE rating = '';
+
+
+
+/////////////////
+// Normalize Qualys
+// Update Qualys Field in History Table 
+// Change its type to JSONB
+///////////////
+
+SELECT COUNT(*)
+FROM history
+WHERE qualys = '';
+
+//## ""126672"" Qualys are empty 
+
+UPDATE history
+SET qualys = '{}'
+WHERE qualys = '';
+
+ALTER TABLE history 
+ALTER COLUMN qualys
+TYPE JSONB 
+USING qualys::JSONB;
 
 /////////////////
 // Getting counts of all possible gradings 
 // for "Number of Configuration Attempt" Groups
 ///////////////
+
+
+
+
 
 
