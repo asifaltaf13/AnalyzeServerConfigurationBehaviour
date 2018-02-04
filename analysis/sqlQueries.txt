@@ -217,6 +217,18 @@ ORDER by AllRatings.ID ASC;
 // Update Rating Field in History Table
 ///////////////
 
+SELECT 
+DISTINCT TRIM(
+regexp_replace(
+	regexp_replace(
+	regexp_replace(h.rating, '\n', ''),
+			'\t', ''),
+					'\r', '')
+) AS Rating
+
+FROM history h
+ORDER BY rating ASC;
+
 SELECT COUNT(rating)
 FROM history
 WHERE rating = ''; 
@@ -226,6 +238,19 @@ WHERE rating = '';
 UPDATE history
 SET rating = NULL
 WHERE rating = '';
+
+//## Removing some spaces etc
+
+UPDATE history
+
+SET rating = TRIM(
+				regexp_replace(
+					regexp_replace(
+						regexp_replace(rating, '\n', ''),
+							'\t', ''),
+									'\r', ''))
+
+WHERE rating IS NOT NULL;
 
 
 
