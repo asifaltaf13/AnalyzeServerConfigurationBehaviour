@@ -331,6 +331,56 @@ GROUP BY AllRatings.Rating
 ORDER by AllRatings.Rating ASC;
 
 
+//##******************************************
+//## JSON Queries
+//##******************************************
+
+/////////////////
+// Selecting Status 
+///////////////
+
+SELECT id, qualys -> 'status'
+FROM history H
+LIMIT 100;
+
+
+
+/////////////////
+// Selecting IPADDRESS 
+///////////////
+
+SELECT h.*, 
+qualys #>'{endpoints,0,ipAddress}' AS IPADDRESS
+
+FROM domain d, history h
+WHERE d.id = h.domainhistory AND qualys != '{}'
+LIMIT 100;
+
+
+
+/////////////////
+//  Getting Number of Endpoints for each config test attempt
+///////////////
+
+SELECT h.*, 
+jsonb_array_length(qualys #>'{endpoints}') AS "Number of Endpoints"
+
+FROM domain d, history h
+WHERE d.id = h.domainhistory AND qualys != '{}'
+LIMIT 100;
+
+
+/////////////////
+//  Getting Number of Endpoints and Endpoints for each config test attempt
+///////////////
+SELECT h.*, 
+jsonb_array_length(qualys #>'{endpoints}') AS "Number of Endpoints",
+qualys #>'{endpoints}' AS "Endpoints"
+
+
+FROM domain d, history h
+WHERE d.id = h.domainhistory AND qualys != '{}'
+LIMIT 100;
 
 
 
