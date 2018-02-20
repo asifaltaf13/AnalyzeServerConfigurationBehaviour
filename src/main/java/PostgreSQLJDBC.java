@@ -22,8 +22,8 @@ public class PostgreSQLJDBC
         {
             Class.forName("org.postgresql.Driver");
             connection = DriverManager
-                    .getConnection("jdbc:postgresql://localhost:5432/17-10-26-qualysdump",
-                            "Asif", "1");
+                    .getConnection("jdbc:postgresql://localhost:5432/fluffy_rainbows",
+                            "postgres", "postgres");
             connection.setAutoCommit(false);
             System.out.println("Opened database successfully");
 
@@ -144,8 +144,8 @@ public class PostgreSQLJDBC
         {
             Class.forName("org.postgresql.Driver");
             connection = DriverManager
-                    .getConnection("jdbc:postgresql://localhost:5432/17-10-26-qualysdump",
-                            "Asif", "1");
+                    .getConnection("jdbc:postgresql://localhost:5432/fluffy_rainbows",
+                            "postgres", "postgres");
             connection.setAutoCommit(false);
         } catch (ClassNotFoundException e)
         {
@@ -167,8 +167,8 @@ public class PostgreSQLJDBC
         {
             Class.forName("org.postgresql.Driver");
             connection = DriverManager
-                    .getConnection("jdbc:postgresql://localhost:5432/17-10-26-qualysdump",
-                            "Asif", "1");
+                    .getConnection("jdbc:postgresql://localhost:5432/fluffy_rainbows",
+                            "postgres", "postgres");
             connection.setAutoCommit(false);
             System.out.println("Opened database successfully.");
 
@@ -205,17 +205,17 @@ public class PostgreSQLJDBC
 
             System.out.println("History data loaded completely");
 
-        resultSet.close();
-        statement.close();
-        connection.close();
-    } catch(
-    Exception e)
+            resultSet.close();
+            statement.close();
+            connection.close();
+        } catch(
+                Exception e)
 
-    {
-        e.printStackTrace();
-        System.err.println(e.getClass().getName() + ": " + e.getMessage());
-        System.exit(0);
-    }
+        {
+            e.printStackTrace();
+            System.err.println(e.getClass().getName() + ": " + e.getMessage());
+            System.exit(0);
+        }
         System.out.println("Data loaded successfully");
-}
+    }
 }

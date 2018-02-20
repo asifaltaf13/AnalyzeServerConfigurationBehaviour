@@ -330,13 +330,40 @@ FROM
 GROUP BY AllRatings.Rating
 ORDER by AllRatings.Rating ASC;
 
+//##******************************************
+//## REMOVE NULL ("45089") AND ERROR ("14819") ASSIGNED ATTEMPTS
+//##******************************************
+
+
+SELECT DISTINCT RATING	
+FROM history  ; 
+
+
+SELECT COUNT(*)
+FROM history 
+WHERE rating is null; 
+
+
+SELECT COUNT(*)
+FROM history 
+WHERE rating LIKE 'E%'; 
+
+
+DELETE 
+FROM history 
+WHERE rating is null;
+
+DELETE 
+FROM history 
+WHERE rating LIKE 'E%';
+
 
 //##******************************************
 //## JSON Queries
 //##******************************************
 
 /////////////////
-// Selecting Status 
+// Selecting Status using JSON Query
 ///////////////
 
 SELECT id, qualys -> 'status'
@@ -346,7 +373,7 @@ LIMIT 100;
 
 
 /////////////////
-// Selecting IPADDRESS 
+// Selecting IPADDRESS using JSON Query
 ///////////////
 
 SELECT h.*, 
@@ -359,7 +386,7 @@ LIMIT 100;
 
 
 /////////////////
-//  Getting Number of Endpoints for each config test attempt
+//  Getting Number of Endpoints for each config test attempt using JSON Query
 ///////////////
 
 SELECT h.*, 
@@ -371,7 +398,7 @@ LIMIT 100;
 
 
 /////////////////
-//  Getting Number of Endpoints and Endpoints for each config test attempt
+//  Getting Number of Endpoints and Endpoints for each config test attempt using JSON Query
 ///////////////
 SELECT h.*, 
 jsonb_array_length(qualys #>'{endpoints}') AS "Number of Endpoints",
@@ -381,6 +408,298 @@ qualys #>'{endpoints}' AS "Endpoints"
 FROM domain d, history h
 WHERE d.id = h.domainhistory AND qualys != '{}'
 LIMIT 100;
+
+
+/////////////////
+//  protocols if ssl is enabled using JSON Query
+///////////////
+
+SELECT h.domainhistory, 
+d.url, 
+h.rating, 
+qualys #>'{endpoints,0,details,protocols}' AS "protocols",
+jsonb_array_length(qualys #>'{endpoints,0,details,protocols}') AS "Total Number of Protocols Enabled",
+replace(concat(qualys #>'{endpoints,0,details,protocols,0,name}',qualys #>'{endpoints,0,details,protocols,0,version}'),'"','') AS ProtocolOne,
+replace(concat(qualys #>'{endpoints,0,details,protocols,1,name}',qualys #>'{endpoints,0,details,protocols,1,version}'),'"','') AS "ProtocolTwo",
+replace(concat(qualys #>'{endpoints,0,details,protocols,2,name}',qualys #>'{endpoints,0,details,protocols,2,version}'),'"','') AS "ProtocolThree",
+replace(concat(qualys #>'{endpoints,0,details,protocols,3,name}',qualys #>'{endpoints,0,details,protocols,3,version}'),'"','') AS "ProtocolFour",
+replace(concat(qualys #>'{endpoints,0,details,protocols,4,name}',qualys #>'{endpoints,0,details,protocols,4,version}'),'"','') AS "ProtocolFive",
+
+CASE 		WHEN replace(concat(qualys #>'{endpoints,0,details,protocols,0,name}',qualys #>'{endpoints,0,details,protocols,0,version}'),'"','')='SSL2.0' THEN '1'
+            WHEN replace(concat(qualys #>'{endpoints,0,details,protocols,1,name}',qualys #>'{endpoints,0,details,protocols,1,version}'),'"','')='SSL2.0' THEN '1'
+			WHEN replace(concat(qualys #>'{endpoints,0,details,protocols,2,name}',qualys #>'{endpoints,0,details,protocols,2,version}'),'"','')='SSL2.0' THEN '1'
+			WHEN replace(concat(qualys #>'{endpoints,0,details,protocols,3,name}',qualys #>'{endpoints,0,details,protocols,3,version}'),'"','')='SSL2.0' THEN '1'
+			WHEN replace(concat(qualys #>'{endpoints,0,details,protocols,4,name}',qualys #>'{endpoints,0,details,protocols,4,version}'),'"','')='SSL2.0' THEN '1'
+            ELSE '0'
+END AS "SSL2Enabled",
+
+CASE 		WHEN replace(concat(qualys #>'{endpoints,0,details,protocols,0,name}',qualys #>'{endpoints,0,details,protocols,0,version}'),'"','')='SSL3.0' THEN '1'
+            WHEN replace(concat(qualys #>'{endpoints,0,details,protocols,1,name}',qualys #>'{endpoints,0,details,protocols,1,version}'),'"','')='SSL3.0' THEN '1'
+			WHEN replace(concat(qualys #>'{endpoints,0,details,protocols,2,name}',qualys #>'{endpoints,0,details,protocols,2,version}'),'"','')='SSL3.0' THEN '1'
+			WHEN replace(concat(qualys #>'{endpoints,0,details,protocols,3,name}',qualys #>'{endpoints,0,details,protocols,3,version}'),'"','')='SSL3.0' THEN '1'
+			WHEN replace(concat(qualys #>'{endpoints,0,details,protocols,4,name}',qualys #>'{endpoints,0,details,protocols,4,version}'),'"','')='SSL3.0' THEN '1'
+            ELSE '0'
+END  AS "SSL3Enabled",
+
+CASE 		WHEN replace(concat(qualys #>'{endpoints,0,details,protocols,0,name}',qualys #>'{endpoints,0,details,protocols,0,version}'),'"','')='TLS1.0' THEN '1'
+            WHEN replace(concat(qualys #>'{endpoints,0,details,protocols,1,name}',qualys #>'{endpoints,0,details,protocols,1,version}'),'"','')='TLS1.0' THEN '1'
+			WHEN replace(concat(qualys #>'{endpoints,0,details,protocols,2,name}',qualys #>'{endpoints,0,details,protocols,2,version}'),'"','')='TLS1.0' THEN '1'
+			WHEN replace(concat(qualys #>'{endpoints,0,details,protocols,3,name}',qualys #>'{endpoints,0,details,protocols,3,version}'),'"','')='TLS1.0' THEN '1'
+			WHEN replace(concat(qualys #>'{endpoints,0,details,protocols,4,name}',qualys #>'{endpoints,0,details,protocols,4,version}'),'"','')='TLS1.0' THEN '1'
+            ELSE '0'
+END  AS "TLS1Enabled",
+
+CASE 		WHEN replace(concat(qualys #>'{endpoints,0,details,protocols,0,name}',qualys #>'{endpoints,0,details,protocols,0,version}'),'"','')='TLS1.1' THEN '1'
+            WHEN replace(concat(qualys #>'{endpoints,0,details,protocols,1,name}',qualys #>'{endpoints,0,details,protocols,1,version}'),'"','')='TLS1.1' THEN '1'
+			WHEN replace(concat(qualys #>'{endpoints,0,details,protocols,2,name}',qualys #>'{endpoints,0,details,protocols,2,version}'),'"','')='TLS1.1' THEN '1'
+			WHEN replace(concat(qualys #>'{endpoints,0,details,protocols,3,name}',qualys #>'{endpoints,0,details,protocols,3,version}'),'"','')='TLS1.1' THEN '1'
+			WHEN replace(concat(qualys #>'{endpoints,0,details,protocols,4,name}',qualys #>'{endpoints,0,details,protocols,4,version}'),'"','')='TLS1.1' THEN '1'
+            ELSE '0'
+END  AS "TLS11Enabled",
+
+CASE 		WHEN replace(concat(qualys #>'{endpoints,0,details,protocols,0,name}',qualys #>'{endpoints,0,details,protocols,0,version}'),'"','')='TLS1.2' THEN '1'
+            WHEN replace(concat(qualys #>'{endpoints,0,details,protocols,1,name}',qualys #>'{endpoints,0,details,protocols,1,version}'),'"','')='TLS1.2' THEN '1'
+			WHEN replace(concat(qualys #>'{endpoints,0,details,protocols,2,name}',qualys #>'{endpoints,0,details,protocols,2,version}'),'"','')='TLS1.2' THEN '1'
+			WHEN replace(concat(qualys #>'{endpoints,0,details,protocols,3,name}',qualys #>'{endpoints,0,details,protocols,3,version}'),'"','')='TLS1.2' THEN '1'
+			WHEN replace(concat(qualys #>'{endpoints,0,details,protocols,4,name}',qualys #>'{endpoints,0,details,protocols,4,version}'),'"','')='TLS1.2' THEN '1'
+            ELSE '0'
+END  AS "TLS12Enabled"
+
+FROM domain d, history h
+WHERE d.id = h.domainhistory AND qualys != '{}'
+LIMIT 100;
+
+
+/////////////////
+//  ocspstapling using JSON Query
+///////////////
+
+
+SELECT h.domainhistory, 
+d.url, 
+h.rating,
+qualys #>'{endpoints,0,details,ocspStapling}' AS "ocspstapling"
+
+FROM domain d, history h
+WHERE d.id = h.domainhistory AND qualys != '{}'
+LIMIT 1000;
+
+
+
+/////////////////
+//  supportsRc4 using JSON Query
+///////////////
+
+SELECT h.domainhistory, 
+d.url, 
+h.rating,
+qualys #>'{endpoints,0,details,supportsRc4}' AS "supportsRc4"
+
+FROM domain d, history h
+WHERE d.id = h.domainhistory AND qualys != '{}'
+LIMIT 100;
+
+
+/////////////////
+// forwardSecrecy  using JSON Query
+///////////////
+
+SELECT h.domainhistory, 
+d.url, 
+h.rating,
+qualys #>'{endpoints,0,details,forwardSecrecy}' AS "forwardSecrecy"
+
+FROM domain d, history h
+WHERE d.id = h.domainhistory AND qualys != '{}'
+LIMIT 100;
+
+
+
+
+/////////////////
+//  heartbleed using JSON Query
+///////////////
+
+SELECT h.domainhistory, 
+d.url, 
+h.rating,
+qualys #>'{endpoints,0,details,heartbleed}' AS "heartbleed"
+
+FROM domain d, history h
+WHERE d.id = h.domainhistory AND qualys != '{}'
+LIMIT 1000;
+
+
+
+
+/////////////////
+// poodle  using JSON Query
+///////////////
+
+SELECT h.domainhistory, 
+d.url, 
+h.rating,
+qualys #>'{endpoints,0,details,poodle}' AS "poodle"
+
+FROM domain d, history h
+WHERE d.id = h.domainhistory AND qualys != '{}'
+LIMIT 1000;
+
+
+
+
+/////////////////
+// hsts.status (absent,present)  using JSON Query
+///////////////
+
+SELECT h.domainhistory, 
+d.url, 
+h.rating,
+qualys #>'{endpoints,0,details,hstsPolicy,status}' AS "hstsPolicy status"
+
+FROM domain d, history h
+WHERE d.id = h.domainhistory AND qualys != '{}'
+LIMIT 1000;
+
+
+
+
+/////////////////
+// hpkp.status  using JSON Query
+///////////////
+
+SELECT h.domainhistory, 
+d.url, 
+h.rating,
+qualys #>'{endpoints,0,details,hpkpPolicy,status}' AS "hpkpPolicy status"
+
+FROM domain d, history h
+WHERE d.id = h.domainhistory AND qualys != '{}'
+LIMIT 1000;
+
+
+
+
+/////////////////
+// keysize and algorithm (e.g. RSA 2048 bit, or EC 256bit) using JSON Query
+///////////////
+
+SELECT h.domainhistory, 
+d.url, 
+h.rating,
+qualys #>'{endpoints,0,details,chain,certs,0,keySize}' AS "keySize",
+qualys #>'{endpoints,0,details,chain,certs,0,keyAlg}' AS "keyAlg",
+qualys #>'{endpoints,0,details,chain,certs,0,sigAlg}' AS "sigAlg"
+
+FROM domain d, history h
+WHERE d.id = h.domainhistory AND qualys != '{}'
+LIMIT 1000;
+
+
+
+
+/////////////////
+// CA  using JSON Query
+///////////////
+
+
+SELECT h.domainhistory, 
+d.url, 
+h.rating,
+qualys #>'{endpoints,0,details,chain,certs,0,keySize}' AS "keySize",
+qualys #>'{endpoints,0,details,chain,certs,0,keyAlg}' AS "keyAlg",
+qualys #>'{endpoints,0,details,chain,certs,0,sigAlg}' AS "sigAlg",
+qualys #>'{endpoints,0,details,chain,certs,0,issuerLabel}' AS "issuerLabel"
+
+FROM domain d, history h
+WHERE d.id = h.domainhistory AND qualys != '{}'
+LIMIT 1000;
+
+
+
+/////////////////
+//  issuerLabel using JSON Query TODO
+///////////////
+
+SELECT count(h.*) freq, 
+qualys #>'{endpoints,0,details,chain,certs,0,issuerLabel}' AS "issuerLabel"
+
+FROM domain d, history h
+WHERE d.id = h.domainhistory AND qualys != '{}'
+Group BY "issuerLabel"
+ORDER BY freq DESC
+LIMIT 1000;
+
+
+
+
+/////////////////
+//   using JSON Query
+///////////////
+
+
+
+
+
+
+/////////////////
+//   using JSON Query
+///////////////
+
+
+
+
+
+
+/////////////////
+//   using JSON Query
+///////////////
+
+
+
+
+
+
+/////////////////
+//   using JSON Query
+///////////////
+
+
+
+
+
+
+/////////////////
+//   using JSON Query
+///////////////
+
+
+
+
+
+
+/////////////////
+//   using JSON Query
+///////////////
+
+
+
+
+
+
+/////////////////
+//   using JSON Query
+///////////////
+
+
+
+
+
+
+/////////////////
+//   using JSON Query
+///////////////
+
 
 
 
