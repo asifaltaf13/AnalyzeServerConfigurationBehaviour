@@ -417,7 +417,7 @@ LIMIT 100;
 SELECT h.domainhistory, 
 d.url, 
 h.rating, 
-qualys #>'{endpoints,0,details,protocols}' AS "protocols",
+
 jsonb_array_length(qualys #>'{endpoints,0,details,protocols}') AS "Total Number of Protocols Enabled",
 replace(concat(qualys #>'{endpoints,0,details,protocols,0,name}',qualys #>'{endpoints,0,details,protocols,0,version}'),'"','') AS ProtocolOne,
 replace(concat(qualys #>'{endpoints,0,details,protocols,1,name}',qualys #>'{endpoints,0,details,protocols,1,version}'),'"','') AS "ProtocolTwo",
@@ -466,8 +466,7 @@ CASE 		WHEN replace(concat(qualys #>'{endpoints,0,details,protocols,0,name}',qua
 END  AS "TLS12Enabled"
 
 FROM domain d, history h
-WHERE d.id = h.domainhistory AND qualys != '{}'
-LIMIT 100;
+WHERE d.id = h.domainhistory AND qualys != '{}';
 
 
 /////////////////
@@ -482,7 +481,8 @@ qualys #>'{endpoints,0,details,ocspStapling}' AS "ocspstapling"
 
 FROM domain d, history h
 WHERE d.id = h.domainhistory AND qualys != '{}'
-LIMIT 1000;
+ORDER BY rating
+;
 
 
 
@@ -497,7 +497,7 @@ qualys #>'{endpoints,0,details,supportsRc4}' AS "supportsRc4"
 
 FROM domain d, history h
 WHERE d.id = h.domainhistory AND qualys != '{}'
-LIMIT 100;
+ORDER BY rating;
 
 
 /////////////////
@@ -511,7 +511,7 @@ qualys #>'{endpoints,0,details,forwardSecrecy}' AS "forwardSecrecy"
 
 FROM domain d, history h
 WHERE d.id = h.domainhistory AND qualys != '{}'
-LIMIT 100;
+ORDER BY rating;
 
 
 
@@ -527,7 +527,7 @@ qualys #>'{endpoints,0,details,heartbleed}' AS "heartbleed"
 
 FROM domain d, history h
 WHERE d.id = h.domainhistory AND qualys != '{}'
-LIMIT 1000;
+ORDER BY rating;
 
 
 
@@ -543,7 +543,7 @@ qualys #>'{endpoints,0,details,poodle}' AS "poodle"
 
 FROM domain d, history h
 WHERE d.id = h.domainhistory AND qualys != '{}'
-LIMIT 1000;
+ORDER BY rating;
 
 
 
@@ -559,7 +559,7 @@ qualys #>'{endpoints,0,details,hstsPolicy,status}' AS "hstsPolicy status"
 
 FROM domain d, history h
 WHERE d.id = h.domainhistory AND qualys != '{}'
-LIMIT 1000;
+ORDER BY rating;
 
 
 
@@ -575,13 +575,13 @@ qualys #>'{endpoints,0,details,hpkpPolicy,status}' AS "hpkpPolicy status"
 
 FROM domain d, history h
 WHERE d.id = h.domainhistory AND qualys != '{}'
-LIMIT 1000;
+ORDER BY rating;
 
 
 
 
 /////////////////
-// keysize and algorithm (e.g. RSA 2048 bit, or EC 256bit) using JSON Query
+// keySizeAndAlgo keysize and algorithm (e.g. RSA 2048 bit, or EC 256bit) using JSON Query
 ///////////////
 
 SELECT h.domainhistory, 
@@ -593,7 +593,7 @@ qualys #>'{endpoints,0,details,chain,certs,0,sigAlg}' AS "sigAlg"
 
 FROM domain d, history h
 WHERE d.id = h.domainhistory AND qualys != '{}'
-LIMIT 1000;
+ORDER BY rating;
 
 
 
@@ -613,7 +613,7 @@ qualys #>'{endpoints,0,details,chain,certs,0,issuerLabel}' AS "issuerLabel"
 
 FROM domain d, history h
 WHERE d.id = h.domainhistory AND qualys != '{}'
-LIMIT 1000;
+ORDER BY rating;
 
 
 
@@ -628,17 +628,73 @@ FROM domain d, history h
 WHERE d.id = h.domainhistory AND qualys != '{}'
 Group BY "issuerLabel"
 ORDER BY freq DESC
-LIMIT 1000;
+;
 
 
 
 
 /////////////////
-//   using JSON Query
+// multipleVariables using JSON Query
 ///////////////
 
 
+SELECT h.domainhistory, 
+d.url, 
+h.rating,
+CASE 		WHEN replace(concat(qualys #>'{endpoints,0,details,protocols,0,name}',qualys #>'{endpoints,0,details,protocols,0,version}'),'"','')='SSL2.0' THEN '1'
+            WHEN replace(concat(qualys #>'{endpoints,0,details,protocols,1,name}',qualys #>'{endpoints,0,details,protocols,1,version}'),'"','')='SSL2.0' THEN '1'
+			WHEN replace(concat(qualys #>'{endpoints,0,details,protocols,2,name}',qualys #>'{endpoints,0,details,protocols,2,version}'),'"','')='SSL2.0' THEN '1'
+			WHEN replace(concat(qualys #>'{endpoints,0,details,protocols,3,name}',qualys #>'{endpoints,0,details,protocols,3,version}'),'"','')='SSL2.0' THEN '1'
+			WHEN replace(concat(qualys #>'{endpoints,0,details,protocols,4,name}',qualys #>'{endpoints,0,details,protocols,4,version}'),'"','')='SSL2.0' THEN '1'
+            ELSE '0'
+END AS "SSL2Enabled",
 
+CASE 		WHEN replace(concat(qualys #>'{endpoints,0,details,protocols,0,name}',qualys #>'{endpoints,0,details,protocols,0,version}'),'"','')='SSL3.0' THEN '1'
+            WHEN replace(concat(qualys #>'{endpoints,0,details,protocols,1,name}',qualys #>'{endpoints,0,details,protocols,1,version}'),'"','')='SSL3.0' THEN '1'
+			WHEN replace(concat(qualys #>'{endpoints,0,details,protocols,2,name}',qualys #>'{endpoints,0,details,protocols,2,version}'),'"','')='SSL3.0' THEN '1'
+			WHEN replace(concat(qualys #>'{endpoints,0,details,protocols,3,name}',qualys #>'{endpoints,0,details,protocols,3,version}'),'"','')='SSL3.0' THEN '1'
+			WHEN replace(concat(qualys #>'{endpoints,0,details,protocols,4,name}',qualys #>'{endpoints,0,details,protocols,4,version}'),'"','')='SSL3.0' THEN '1'
+            ELSE '0'
+END  AS "SSL3Enabled",
+
+CASE 		WHEN replace(concat(qualys #>'{endpoints,0,details,protocols,0,name}',qualys #>'{endpoints,0,details,protocols,0,version}'),'"','')='TLS1.0' THEN '1'
+            WHEN replace(concat(qualys #>'{endpoints,0,details,protocols,1,name}',qualys #>'{endpoints,0,details,protocols,1,version}'),'"','')='TLS1.0' THEN '1'
+			WHEN replace(concat(qualys #>'{endpoints,0,details,protocols,2,name}',qualys #>'{endpoints,0,details,protocols,2,version}'),'"','')='TLS1.0' THEN '1'
+			WHEN replace(concat(qualys #>'{endpoints,0,details,protocols,3,name}',qualys #>'{endpoints,0,details,protocols,3,version}'),'"','')='TLS1.0' THEN '1'
+			WHEN replace(concat(qualys #>'{endpoints,0,details,protocols,4,name}',qualys #>'{endpoints,0,details,protocols,4,version}'),'"','')='TLS1.0' THEN '1'
+            ELSE '0'
+END  AS "TLS1Enabled",
+
+CASE 		WHEN replace(concat(qualys #>'{endpoints,0,details,protocols,0,name}',qualys #>'{endpoints,0,details,protocols,0,version}'),'"','')='TLS1.1' THEN '1'
+            WHEN replace(concat(qualys #>'{endpoints,0,details,protocols,1,name}',qualys #>'{endpoints,0,details,protocols,1,version}'),'"','')='TLS1.1' THEN '1'
+			WHEN replace(concat(qualys #>'{endpoints,0,details,protocols,2,name}',qualys #>'{endpoints,0,details,protocols,2,version}'),'"','')='TLS1.1' THEN '1'
+			WHEN replace(concat(qualys #>'{endpoints,0,details,protocols,3,name}',qualys #>'{endpoints,0,details,protocols,3,version}'),'"','')='TLS1.1' THEN '1'
+			WHEN replace(concat(qualys #>'{endpoints,0,details,protocols,4,name}',qualys #>'{endpoints,0,details,protocols,4,version}'),'"','')='TLS1.1' THEN '1'
+            ELSE '0'
+END  AS "TLS11Enabled",
+
+CASE 		WHEN replace(concat(qualys #>'{endpoints,0,details,protocols,0,name}',qualys #>'{endpoints,0,details,protocols,0,version}'),'"','')='TLS1.2' THEN '1'
+            WHEN replace(concat(qualys #>'{endpoints,0,details,protocols,1,name}',qualys #>'{endpoints,0,details,protocols,1,version}'),'"','')='TLS1.2' THEN '1'
+			WHEN replace(concat(qualys #>'{endpoints,0,details,protocols,2,name}',qualys #>'{endpoints,0,details,protocols,2,version}'),'"','')='TLS1.2' THEN '1'
+			WHEN replace(concat(qualys #>'{endpoints,0,details,protocols,3,name}',qualys #>'{endpoints,0,details,protocols,3,version}'),'"','')='TLS1.2' THEN '1'
+			WHEN replace(concat(qualys #>'{endpoints,0,details,protocols,4,name}',qualys #>'{endpoints,0,details,protocols,4,version}'),'"','')='TLS1.2' THEN '1'
+            ELSE '0'
+END  AS "TLS12Enabled",
+qualys #>'{endpoints,0,details,ocspStapling}' AS "ocspstapling",
+qualys #>'{endpoints,0,details,supportsRc4}' AS "supportsRc4",
+qualys #>'{endpoints,0,details,forwardSecrecy}' AS "forwardSecrecy",
+qualys #>'{endpoints,0,details,heartbleed}' AS "heartbleed",
+qualys #>'{endpoints,0,details,poodle}' AS "poodle",
+qualys #>'{endpoints,0,details,hstsPolicy,status}' AS "hstsPolicy status",
+qualys #>'{endpoints,0,details,hpkpPolicy,status}' AS "hpkpPolicy status",
+qualys #>'{endpoints,0,details,chain,certs,0,keySize}' AS "keySize",
+qualys #>'{endpoints,0,details,chain,certs,0,keyAlg}' AS "keyAlg",
+qualys #>'{endpoints,0,details,chain,certs,0,sigAlg}' AS "sigAlg",
+qualys #>'{endpoints,0,details,chain,certs,0,issuerLabel}' AS "issuerLabel"
+
+FROM domain d, history h
+WHERE d.id = h.domainhistory AND qualys != '{}'
+ORDER BY rating DESC;
 
 
 

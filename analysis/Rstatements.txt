@@ -18,7 +18,7 @@ setwd("C:/Users/malik/Documents/GitHub/AnalyzeServerConfigurationBehaviour/analy
 
 
 # read csv file
-ratings = read.csv("bestAndWorstRatingsDatasetForR.csv")  
+ratings = read.csv("CA20022018.csv")  
 
 
 # print dataset
@@ -32,8 +32,15 @@ str(ratings)
 # discretize Attempts column by converting to Factor from Integer Type
 ratings$attempts  <- factor(ratings$attempts)
 
+# for multiple variables
+ratings$SSL2Enabled  <- factor(ratings$SSL2Enabled)
+ratings$SSL3Enabled  <- factor(ratings$SSL3Enabled)
+ratings$TLS1Enabled  <- factor(ratings$TLS1Enabled)
+ratings$TLS11Enabled  <- factor(ratings$TLS11Enabled)
+ratings$TLS12Enabled  <- factor(ratings$TLS12Enabled)
+
 # apply apriori algorithm
-rules <- apriori(ratings[c(2:4)], parameter = list(supp = 0.0001, conf = 0.9, target = "rules"))
+rules <- apriori(ratings[c(3:6)], parameter = list(supp = 0.001, conf = 1.0, target = "rules", minlen = 1, maxlen = 20))
 
 
 # number of rules
@@ -49,13 +56,50 @@ inspect(head(rules, by = "lift"))
 # inspect in detail
 inspect(rules, by = "lift")
 
+# rules manipulation TODO
+rulesRated <- subset(rules, subset = rhs %pin% "rating=")
+rulesAPlus <- subset(rules, subset = rhs %in% "rating=A+")
+rulesA <- subset(rules, subset = rhs %in% "rating=A")
+rulesAMinus <- subset(rules, subset = rhs %in% "rating=A-")
+rulesB <- subset(rules, subset = rhs %in% "rating=B")
+rulesC <- subset(rules, subset = rhs %in% "rating=C")
+rulesF <- subset(rules, subset = rhs %in% "rating=F")
+rulesT <- subset(rules, subset = rhs %in% "rating=T")
+
+# sort
+rules <- sort(rules, by = "support", decreasing = TRUE )
+
+# write the rules to file
+write(rules, file = "Rules_CA20022018.csv", sep = ",", col.names = NA)
 
 
 
+# rule minig and storage
+library("arules")
+setwd("C:/Users/malik/Documents/GitHub/AnalyzeServerConfigurationBehaviour/analysis/queryResults")     
+
+ratings = read.csv("multipleVariables20022018.csv")
+
+ratings$SSL2Enabled  <- factor(ratings$SSL2Enabled)
+ratings$SSL3Enabled  <- factor(ratings$SSL3Enabled)
+ratings$TLS1Enabled  <- factor(ratings$TLS1Enabled)
+ratings$TLS11Enabled  <- factor(ratings$TLS11Enabled)
+ratings$TLS12Enabled  <- factor(ratings$TLS12Enabled)
+
+rules <- apriori(ratings[c(3:5,9:18)], parameter = list(supp = 0.1, conf = 1.0, target = "rules", minlen = 1, maxlen = 20))
+rules <- sort(rules, by = "support", decreasing = TRUE )
+write(rules, file = "Rules_multipleVariables20022018.csv", sep = ",", col.names = NA)
+
+# frequent itemsets and storage
+frequentItems <- eclat (ratings[c(3:5,9:18)], parameter = list(supp = 0.1, maxlen = 20))
+frequentItems <- sort(frequentItems, by = "support", decreasing = TRUE )
+write(frequentItems, file = "FrequentItemsets_multipleVariables20022018.csv", sep = ",", col.names = NA)
 
 
 
+# rpart
+library("rpart")
 
-
-
-
+fit <- rpart(rating ~ SSL2Enabled + SSL3Enabled + TLS1Enabled, method="class", data=ratings)
+plot(fit)
+text(fit)

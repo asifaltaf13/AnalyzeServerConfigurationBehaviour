@@ -1,0 +1,2 @@
+"","rules","support","confidence","lift","count"
+"1","{heartbleed=true} => {rating=F}",0.00101664588190641,1,11.0305023923445,75
